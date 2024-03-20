@@ -20,6 +20,12 @@ public class OpenAPISpecGenerator {
             info.put("description", "API dynamically generated from Draw.io XML.");
             openAPISpec.put("info", info);
 
+            List<Map<String, String>> servers = new ArrayList<>();
+            Map<String, String> server = new LinkedHashMap<>();
+            server.put("url", "http://localhost:4010");
+            servers.add(server);
+            openAPISpec.put("servers", servers);
+
             Map<String, Object> paths = new LinkedHashMap<>();
             for (String entity : entities.keySet()) {
                 Map<String, Object> pathItem = new LinkedHashMap<>();
