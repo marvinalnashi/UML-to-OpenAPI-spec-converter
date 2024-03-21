@@ -1,4 +1,3 @@
-// generation.component.ts
 import { Component } from '@angular/core';
 import { GenerationService } from '../generation.service';
 
