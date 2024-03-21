@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: converter-backend/Dockerfile
+    volumes:
+      - ./data:/app/data
     ports:
       - "8080:8080"
   converter-frontend:

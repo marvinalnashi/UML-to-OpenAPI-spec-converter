@@ -1,30 +1,22 @@
-# Use Maven base image with JDK 17 to compile and run the Spring Boot application
+# Assuming you're using a Maven project
 FROM maven:3.8.4-openjdk-17 AS build
-
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the Maven configuration file
-COPY converter-backend/pom.xml /app
+# Copy your entire project into the Docker image, including the resources directory
+COPY converter-backend /app
 
-# Copy the project source
-COPY converter-backend/src /app/src
+# Run Maven to build your project
+RUN mvn clean package
 
-# Compile and package the application
-# Skip tests to speed up the build if you don't need them during docker build
-RUN mvn clean package -DskipTests
-
-# For the actual application container, use the OpenJDK image to run the jar
-# Adjusted to use a known existing OpenJDK 17 image
-FROM openjdk:17-slim
-
+# Use OpenJDK to run your built application
+FROM openjdk:17
 WORKDIR /app
 
-# Copy the jar file from the build stage
-COPY --from=build /app/target/*.jar app.jar
+# Copy the built application from the build stage
+COPY --from=build /app/target/*.jar /app/app.jar
 
-# Expose the port the app runs on
+# Expose the port your application uses
 EXPOSE 8080
 
-# Run the jar file
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Command to run your application
+CMD ["java", "-jar", "app.jar"]

@@ -1,6 +1,8 @@
 package org.example;
 
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -8,22 +10,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 public class GenerationController {
 
-    private final String xmlFilePath = "src/main/resources/test-class-diagram.xml";
-    private final String outputPath = "export.yml";
+    @Value("classpath:test-class-diagram.xml")
+    private Resource xmlFileResource;
+
+    private final String outputPath = "/app/data/export.yml"; // Adjusted path for Docker volume
 
     @PostMapping("/generate")
     public ResponseEntity<String> generateOpenAPISpec() {
         try {
-            Map<String, List<String>> entities = XMLParser.parseXML(xmlFilePath);
+            // Use the getInputStream method to pass the InputStream directly to XMLParser
+            Map<String, List<String>> entities = XMLParser.parseXML(xmlFileResource.getInputStream());
             OpenAPISpecGenerator.generateSpec(entities, outputPath);
             return ResponseEntity.ok("Generation successful");
         } catch (Exception e) {
@@ -33,16 +36,11 @@ public class GenerationController {
     }
 
     @GetMapping("/export.yml")
-    public ResponseEntity<InputStreamResource> getOpenAPISpec() throws FileNotFoundException {
-        File file = new File(outputPath);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export.yml");
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-
+    public ResponseEntity<Resource> getOpenAPISpec() throws IOException {
+        Resource fileResource = new FileSystemResource(outputPath);
         return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(file.length())
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export.yml")
                 .contentType(MediaType.parseMediaType("application/x-yaml"))
-                .body(resource);
+                .body(fileResource);
     }
 }

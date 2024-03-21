@@ -1,0 +1,37 @@
+---
+openapi: "3.0.0"
+info:
+  title: "Generated API from Draw.io"
+  version: "1.0.0"
+  description: "API dynamically generated from Draw.io XML."
+servers:
+- url: "http://localhost:4010"
+paths:
+  /professor:
+    get:
+      summary: "Get all Professor"
+      description: "Retrieve all instances of Professor"
+      responses:
+        "200":
+          description: "Successful response"
+  /address:
+    get:
+      summary: "Get all Address"
+      description: "Retrieve all instances of Address"
+      responses:
+        "200":
+          description: "Successful response"
+  /student:
+    get:
+      summary: "Get all Student"
+      description: "Retrieve all instances of Student"
+      responses:
+        "200":
+          description: "Successful response"
+  /person:
+    get:
+      summary: "Get all Person"
+      description: "Retrieve all instances of Person"
+      responses:
+        "200":
+          description: "Successful response"
