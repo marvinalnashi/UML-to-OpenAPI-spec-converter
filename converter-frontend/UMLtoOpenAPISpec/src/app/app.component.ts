@@ -5,8 +5,6 @@ import { GenerationComponent } from './generation/generation.component';
   selector: 'app-root',
   standalone: true,
   imports: [GenerationComponent],
-  template: `
-    <app-generation></app-generation>
-  `
+  templateUrl: './app.component.html',
 })
 export class AppComponent { }
