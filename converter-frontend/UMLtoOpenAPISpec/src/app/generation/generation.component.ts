@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { GenerationService } from '../generation.service';
 import { MockServerService } from '../mock-server.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-generation',
@@ -11,7 +12,8 @@ import { MockServerService } from '../mock-server.service';
 export class GenerationComponent {
   constructor(
     private generationService: GenerationService,
-    private mockServerService: MockServerService
+    private mockServerService: MockServerService,
+    private http: HttpClient
   ) { }
 
   generate() {
@@ -21,11 +23,10 @@ export class GenerationComponent {
     });
   }
 
-  startMockServer() {
-    this.mockServerService.startMockServer().subscribe({
-      next: (response) => console.log(response),
-      error: (error) => console.error('Error starting mock server:', error)
+  startMockServer(): void {
+    this.http.post('http://localhost:8080/start-mock-server', {}).subscribe({
+      next: (response: any) => console.log(response),
+      error: (error: any) => console.error(error)
     });
   }
-
 }

@@ -43,4 +43,18 @@ public class GenerationController {
                 .contentType(MediaType.parseMediaType("application/x-yaml"))
                 .body(fileResource);
     }
+
+    @PostMapping("/start-mock-server")
+    public ResponseEntity<String> startMockServer() {
+        try {
+            String command = "docker exec prism-mock-server prism mock -p 4010 --cors /app/data/export.yml";
+            Runtime.getRuntime().exec(command);
+            return ResponseEntity.ok("Prism mock server started");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to start Prism mock server");
+        }
+    }
+
+
 }

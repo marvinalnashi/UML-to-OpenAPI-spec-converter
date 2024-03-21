@@ -14,3 +14,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "4200:80"
+  mockserver:
+    build:
+      context: .
+      dockerfile: prism/Dockerfile
+    container_name: prism-mock-server
+    command: sh -c "while true; do sleep 30; done"
+    ports:
+      - "4010:4010"
