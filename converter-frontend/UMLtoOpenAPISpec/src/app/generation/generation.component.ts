@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { GenerationService } from '../generation.service';
 import { MockServerService } from '../mock-server.service';
 import { HttpClient } from '@angular/common/http';
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-generation',
@@ -23,10 +24,14 @@ export class GenerationComponent {
     });
   }
 
-  startMockServer(): void {
-    this.http.post('http://localhost:8080/start-mock-server', {}).subscribe({
-      next: (response: any) => console.log(response),
-      error: (error: any) => console.error(error)
+  onStartMockServer(): void {
+    this.mockServerService.startMockServer().subscribe({
+      next: (response) => {
+        console.log(response.message);
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+      }
     });
   }
 }
