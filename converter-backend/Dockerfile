@@ -1,19 +1,33 @@
-# Assuming you're using a Maven project
-FROM maven:3.8.4-openjdk-17 AS build
+# Start with a Debian-based OpenJDK image
+FROM openjdk:17-slim-buster
+
+# Install necessary packages for fetching Docker's GPG key and adding the Docker repository
+RUN apt-get update && \
+    apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+
+# Add Docker’s official GPG key
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+
+# Set up the Docker stable repository
+RUN add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/debian \
+   $(lsb_release -cs) \
+   stable"
+
+# Install Docker Engine
+RUN apt-get update && \
+    apt-get install -y docker-ce docker-ce-cli containerd.io
+
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy your entire project into the Docker image, including the resources directory
-COPY converter-backend /app
-
-# Run Maven to build your project
-RUN mvn clean package
-
-# Use OpenJDK to run your built application
-FROM openjdk:17
-WORKDIR /app
-
-# Copy the built application from the build stage
-COPY --from=build /app/target/*.jar /app/app.jar
+# Copy the built JAR file of your application into the container
+COPY ./target/*.jar /app/app.jar
 
 # Expose the port your application uses
 EXPOSE 8080
