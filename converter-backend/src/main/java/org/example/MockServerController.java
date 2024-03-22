@@ -14,7 +14,7 @@ public class MockServerController {
     public ResponseEntity<Object> startPrismMockServer() {
         ProcessBuilder processBuilder = new ProcessBuilder();
         try {
-            processBuilder.command("bash", "-c", "prism mock -p 4010 --cors /data/export.yml");
+            processBuilder.command("bash", "-c", "prism mock -p 4010 --cors --host 0.0.0.0 /data/export.yml");
 
             // Start the process
             Process process = processBuilder.start();
