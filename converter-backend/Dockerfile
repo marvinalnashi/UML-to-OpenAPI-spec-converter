@@ -1,4 +1,15 @@
-# Start with a Debian-based OpenJDK image
+# Use a multi-stage build to first build the Java application
+# Stage 1: Build the application
+FROM maven:3.8.4-openjdk-17 as builder
+
+# Copy the source code
+COPY ./converter-backend /build
+WORKDIR /build
+
+# Package the application
+RUN mvn clean package
+
+# Stage 2: Setup the runtime container
 FROM openjdk:17-slim-buster
 
 # Install necessary packages for fetching Docker's GPG key and adding the Docker repository
@@ -26,11 +37,11 @@ RUN apt-get update && \
 # Set the working directory to /app
 WORKDIR /app
 
-# Copy the built JAR file of your application into the container
-COPY ./target/*.jar /app/app.jar
+# Copy the built JAR file from the builder stage
+COPY --from=builder /build/target/*.jar /app/app.jar
 
 # Expose the port your application uses
 EXPOSE 8080
 
 # Command to run your application
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "/app/app.jar"]
