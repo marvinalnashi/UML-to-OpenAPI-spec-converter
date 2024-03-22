@@ -11,17 +11,28 @@ import {Observable} from "rxjs";
   providers: [GenerationService, MockServerService]
 })
 export class GenerationComponent {
+
+  selectedFile: File | null = null;
+
   constructor(
     private generationService: GenerationService,
     private mockServerService: MockServerService,
     private http: HttpClient
   ) { }
 
+  onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
   generate() {
-    this.generationService.generateSpec().subscribe({
-      next: (response) => console.log('Generation successful', response),
-      error: (error) => console.error('Generation failed', error)
-    });
+    if (this.selectedFile) {
+      this.generationService.generateSpec(this.selectedFile).subscribe({
+        next: (response) => console.log('Generation successful', response),
+        error: (error) => console.error('Generation failed', error)
+      });
+    } else {
+      console.error('No file selected');
+    }
   }
 
   onStartMockServer(): void {

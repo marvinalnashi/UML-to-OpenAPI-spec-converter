@@ -9,12 +9,11 @@ export class GenerationService {
 
   constructor(private http: HttpClient) { }
 
-  generateSpec(): Observable<any> {
-    return this.http.post(this.generateUrl, {});
-  }
+  generateSpec(file: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('file', file, file.name);
 
-  startMockServer(): Observable<any> {
-    // Ensure the URL matches the backend endpoint
-    return this.http.get(`${this.baseUrl}/start-prism-mock`);
+    // Note: Adjust the URL as needed based on your backend setup
+    return this.http.post(this.generateUrl, formData);
   }
 }
