@@ -17,25 +17,22 @@ public class MDJParser {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(mdjInputStream);
 
-            // Assuming the UML model is within a "ownedElements" node
+            // Assuming the structure you provided, navigating through the JSON to find classes
             JsonNode ownedElements = rootNode.path("ownedElements");
-
-            for (JsonNode element : ownedElements) {
-                // This is just an example path, adjust according to your .mdj structure
-                String type = element.path("_type").asText();
-                if ("UMLClass".equals(type)) {
-                    String className = element.path("name").asText();
-                    List<String> properties = new ArrayList<>();
-                    if (element.has("attributes")) {
-                        for (JsonNode attribute : element.path("attributes")) {
+            for (JsonNode ownedElement : ownedElements) {
+                JsonNode modelElements = ownedElement.path("ownedElements");
+                for (JsonNode modelElement : modelElements) {
+                    if ("UMLClass".equals(modelElement.path("_type").asText())) {
+                        String className = modelElement.path("name").asText();
+                        List<String> attributes = new ArrayList<>();
+                        for (JsonNode attribute : modelElement.path("attributes")) {
                             String attributeName = attribute.path("name").asText();
-                            String attributeType = attribute.path("type").path("name").asText();
-                            properties.add(attributeName + " : " + attributeType);
+                            String attributeType = attribute.path("type").asText("");
+                            attributes.add("+ " + attributeName + ": " + attributeType);
                         }
+                        entities.put(className, attributes);
                     }
-                    entities.put(className, properties);
                 }
-                // You can extend this to parse other UML elements such as relations
             }
         } catch (Exception e) {
             e.printStackTrace();
