@@ -37,6 +37,8 @@ public class GenerationController {
                 parsedData = XMLParser.parseXML(fileInputStream);
             } else if (fileName != null && fileName.endsWith(".uxf")) {
                 parsedData = UXFParser.parseUXF(fileInputStream);
+            } else if (fileName != null && fileName.endsWith(".mdj")) {
+                parsedData = MDJParser.parseMDJ(fileInputStream);
             } else {
                 return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Unsupported file type");
             }
